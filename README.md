@@ -194,7 +194,7 @@ MIT License - see [LICENSE](./LICENSE) file
 
 ## 👤 Author
 
-**Your Name**
+**Jayalakshmi**
 
 - Email: jayaneethipathy@gmail.com
 
@@ -205,3 +205,4 @@ MIT License - see [LICENSE](./LICENSE) file
 ---
 
 **Note**: This implementation demonstrates production-ready code patterns, comprehensive testing, and thoughtful architecture. The keyword-based tool routing is intentionally simplified for the demo - production systems should use LLM function calling (OpenAI/Claude) for accurate tool selection.
+
