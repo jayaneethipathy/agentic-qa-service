@@ -5,24 +5,24 @@ Production-grade question answering system with tool orchestration, streaming re
 ## 🎯 Features
 
 ### Core (Section B - 45%)
-- ✅ Tool-using agent with dynamic selection
-- ✅ Live tools: Web search (DuckDuckGo) + Weather
-- ✅ Structured JSON I/O with Pydantic validation
-- ✅ Parallel tool execution with asyncio
-- ✅ Retry logic with exponential backoff
-- ✅ Comprehensive error handling
-- ✅ Latency tracking per step
-- ✅ Token usage and cost estimation
+-  Tool-using agent with dynamic selection
+-  Live tools: Web search (DuckDuckGo) + Weather
+-  Structured JSON I/O with Pydantic validation
+-  Parallel tool execution with asyncio
+-  Retry logic with exponential backoff
+-  Comprehensive error handling
+-  Latency tracking per step
+-  Token usage and cost estimation
 
 ### Bonus Features (~30%)
-- ✅ **Streaming responses** - Real-time answer generation with SSE
-- ✅ **JSON Schema validation** - Automatic validation of tool I/O
-- ✅ **Policy layer** - Domain blocking, tool allowlisting, content filtering
-- ✅ **Dockerfile + docker-compose** - One-liner deployment
-- ✅ **Concurrency limits** - Semaphore-based rate limiting
-- ✅ **Comprehensive tests** - 85%+ coverage with pytest
-- ✅ **Observability** - Structured logging and distributed tracing
-- ✅ **Cost tracking** - Per-query cost breakdown
+-  **Streaming responses** - Real-time answer generation with SSE
+-  **JSON Schema validation** - Automatic validation of tool I/O
+-  **Policy layer** - Domain blocking, tool allowlisting, content filtering
+-  **Dockerfile + docker-compose** - One-liner deployment
+-  **Concurrency limits** - Semaphore-based rate limiting
+-  **Comprehensive tests** - 85%+ coverage with pytest
+-  **Observability** - Structured logging and distributed tracing
+-  **Cost tracking** - Per-query cost breakdown
 
 ## 🚀 Quick Start
 
@@ -58,7 +58,7 @@ pytest tests/ -v --cov=src
 docker-compose up
 ```
 
-## 📊 Example Output
+##  Example Output
 ```json
 {
   "answer": "Based on web search results:\n\n🔍 Latest AI developments include...",
@@ -141,11 +141,11 @@ docker build -t agentic-qa . && docker run -p 8000:8000 agentic-qa
 
 ## 🔐 Security
 
-- ✅ Policy enforcement (domain blocking, tool allowlisting)
-- ✅ Input validation with Pydantic
-- ✅ Query content filtering
-- ✅ Rate limiting per tenant
-- ✅ Secure secret management patterns
+-  Policy enforcement (domain blocking, tool allowlisting)
+-  Input validation with Pydantic
+-  Query content filtering
+-  Rate limiting per tenant
+-  Secure secret management patterns
 
 ## 🛠️ Development
 ```bash

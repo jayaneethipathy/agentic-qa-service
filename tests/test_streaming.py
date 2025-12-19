@@ -7,9 +7,9 @@ from src.tools.weather import WeatherTool
 from src.tools.calculator import CalculatorTool
 from src.agent import AgenticQA
 from src.policy import PolicyEnforcer
+import pytest_asyncio
 
-
-@pytest.fixture
+@pytest_asyncio.fixture
 async def streaming_agent():
     """Create agent for streaming tests"""
     cache = InMemoryCache()

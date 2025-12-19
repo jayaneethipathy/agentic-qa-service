@@ -59,7 +59,14 @@ class WebSearchTool(BaseTool):
                     "snippet": topic.get("Text", ""),
                     "url": topic.get("FirstURL", "")
                 })
-        
+        # 3. FALLBACK: If still empty, return a message instead of an empty list
+        if not results:
+            return {
+                "query": query,
+                "results": [],
+                "error": "No instant answer available. Try a more specific query.",
+                "sources": [{"name": "DuckDuckGo", "url": f"https://duckduckgo.com/?q={query}"}]
+            }
         return {
             "query": query,
             "results": results[:max_results],

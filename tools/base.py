@@ -13,7 +13,8 @@ from src.models import ToolSchema, ToolResult
 from src.observability import StructuredLogger
 
 logger = StructuredLogger(__name__)
-
+def _latency_ms(start_time: float) -> int:
+    return max(1, int((time.perf_counter() - start_time) * 1000))
 
 class BaseTool(ABC):
     """Base class for all tools with retry and validation"""
@@ -50,7 +51,7 @@ class BaseTool(ABC):
                 }
             }
         }
-    
+
     def validate_output(self, result: Dict[str, Any]) -> bool:
         """Validate tool output against schema"""
         try:
@@ -70,7 +71,7 @@ class BaseTool(ABC):
     )
     async def execute(self, **kwargs) -> ToolResult:
         """Execute tool with caching, retries, and validation"""
-        start_time = time.time()
+        start_time = time.perf_counter()
         tool_name = self.get_schema().name
         
         # Check cache
@@ -80,10 +81,12 @@ class BaseTool(ABC):
             cached_result = await self.cache.get(cache_key)
             if cached_result:
                 logger.info("cache_hit", tool=tool_name)
+                latency = _latency_ms(start_time)
+
                 return ToolResult(
                     tool_name=tool_name,
                     result=cached_result,
-                    latency_ms=int((time.time() - start_time) * 1000),
+                    latency_ms=latency,
                     cached=True
                 )
         
@@ -95,7 +98,7 @@ class BaseTool(ABC):
             if not self.validate_output(result):
                 logger.warning("output_validation_failed", tool=tool_name)
             
-            latency = int((time.time() - start_time) * 1000)
+            latency = _latency_ms(start_time)
             
             # Cache result
             if self.cache and not cached:
@@ -114,7 +117,7 @@ class BaseTool(ABC):
             )
             
         except Exception as e:
-            latency = int((time.time() - start_time) * 1000)
+            latency =  _latency_ms(start_time)
             logger.error("tool_execution_failed",
                         tool=tool_name,
                         error=str(e),
@@ -126,6 +129,7 @@ class BaseTool(ABC):
                 latency_ms=latency,
                 error=str(e)
             )
+
 
 
     def validate_tool_output(self, result: dict):

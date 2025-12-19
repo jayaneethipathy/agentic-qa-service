@@ -14,6 +14,7 @@ from src.agent import AgenticQA
 from src.policy import PolicyEnforcer
 
 
+
 async def stream_query(agent: AgenticQA, query: str):
     """Stream agent responses in real-time"""
     print(f"\n{'='*70}")
@@ -36,7 +37,7 @@ async def stream_query(agent: AgenticQA, query: str):
             
             elif chunk_type == "tool_result":
                 latency = chunk.get("latency_ms", 0)
-                status = "✅" if not chunk.get("error") else "❌"
+                status = "" if not chunk.get("error") else ""
                 print(f"{status} {chunk['tool_name']} completed in {latency}ms")
             
             elif chunk_type == "synthesis":
@@ -44,18 +45,18 @@ async def stream_query(agent: AgenticQA, query: str):
             
             elif chunk_type == "answer":
                 print(f"\n📝 Final Answer:\n{chunk['answer']}")
-                print(f"\n📊 Metadata:")
+                print(f"\n Metadata:")
                 print(f"   • Latency: {chunk['latency_ms']['total']}ms")
                 print(f"   • Tokens: {chunk['tokens']['prompt'] + chunk['tokens']['completion']}")
                 print(f"   • Sources: {len(chunk['sources'])}")
             
             elif chunk_type == "error":
-                print(f"❌ Error: {chunk['message']}")
+                print(f" Error: {chunk['message']}")
             
             # Small delay for visual effect
             await asyncio.sleep(0.05)
     except Exception as e:
-        print(f"❌ Error during streaming: {e}")
+        print(f" Error during streaming: {e}")
 
 
 async def main():
@@ -89,7 +90,7 @@ async def main():
         "Search for latest AI developments"
     ]
     
-    print(f"\n🎬 Running {len(queries)} demo queries...\n")
+    print(f"\n Running {len(queries)} demo queries...\n")
     
     for i, query in enumerate(queries, 1):
         print(f"\n{'='*70}")
@@ -102,18 +103,18 @@ async def main():
             await asyncio.sleep(1)
     
     print("\n" + "="*70)
-    print("✅ Streaming demo completed successfully!")
+    print(" Streaming demo completed successfully!")
     print("="*70)
     
     # Show cache statistics
-    print("\n📊 Cache Statistics:")
+    print("\n Cache Statistics:")
     stats = cache.get_stats()
     print(f"   • Cache Hits: {stats['hits']}")
     print(f"   • Cache Misses: {stats['misses']}")
     print(f"   • Hit Rate: {stats['hit_rate']:.1%}")
     
     # Cleanup
-    print("\n🧹 Cleaning up...")
+    print("\n Cleaning up...")
     await registry.close_all()
 
 
@@ -121,10 +122,10 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n\n⚠️  Demo interrupted by user")
+        print("\n\n Demo interrupted by user")
         sys.exit(0)
     except Exception as e:
-        print(f"\n\n❌ Fatal error: {e}")
+        print(f"\n\n Fatal error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

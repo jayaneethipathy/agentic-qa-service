@@ -14,7 +14,7 @@ from src.policy import PolicyEnforcer
 async def main():
     """Main application"""
     print("=" * 70)
-    print("🤖 Agentic QA Service Demo")
+    print(" Agentic QA Service Demo")
     print("=" * 70)
     print()
     
@@ -25,7 +25,7 @@ async def main():
     policy = PolicyEnforcer()
     
     # Initialize tools
-    print("📦 Initializing tools...")
+    print(" Initializing tools...")
     registry = ToolRegistry()
     registry.register(WebSearchTool(cache=cache))
     registry.register(WeatherTool(cache=cache))
@@ -33,7 +33,7 @@ async def main():
     
     print()
     
-    # Initialize agent - FIXED: removed llm_client parameter
+    # Initialize agent - 
     agent = AgenticQA(
         tool_registry=registry,
         policy=policy,
@@ -46,11 +46,11 @@ async def main():
         "Tell me the weather for New York City.", # Parameter extraction
         "Search for latest news about quantum computing.", # Standard search
         "Find news about AI, Robotics, Space, Biology, and Physics.", # Concurrency test
-        "What's the weather in Paris?" # Run twice to test cache
+        "What's the weather in Paris?", # Run twice to test cache
         "Calculate 15 * 234 + 567"
     ]
     
-    print(f"🎬 Running {len(test_queries)} demo queries...\n")
+    print(f" Running {len(test_queries)} demo queries...\n")
     
     for i, query in enumerate(test_queries, 1):
         print(f"{'─' * 70}")
@@ -64,10 +64,10 @@ async def main():
             # Print structured JSON response
             output = {
                 "answer": response.answer,
-                "sources": [s.dict() for s in response.sources],
-                "latency_ms": response.latency_ms.dict(),
-                "tokens": response.tokens.dict(),
-                "cost": response.cost.dict() if response.cost else None,
+                "sources": [s.model_dump() for s in response.sources],
+                "latency_ms": response.latency_ms.model_dump(),
+                "tokens": response.tokens.model_dump(),
+                "cost": response.cost.model_dump() if response.cost else None,
                 "reasoning_steps": response.reasoning_steps
             }
             
@@ -75,17 +75,17 @@ async def main():
             print()
             
         except Exception as e:
-            print(f"❌ Error processing query: {e}")
+            print(f" Error processing query: {e}")
             import traceback
             traceback.print_exc()
             print()
     
     print("=" * 70)
-    print("✅ Demo completed successfully!")
+    print(" Demo completed successfully!")
     print("=" * 70)
     
     # Show cache statistics
-    print("\n📊 Cache Statistics:")
+    print("\n Cache Statistics:")
     stats = cache.get_stats()
     print(f"   • Cache Hits: {stats['hits']}")
     print(f"   • Cache Misses: {stats['misses']}")
@@ -93,7 +93,7 @@ async def main():
     print(f"   • Total Requests: {stats['total_requests']}")
     
     # Cleanup
-    print("\n🧹 Cleaning up...")
+    print("\n Cleaning up...")
     await registry.close_all()
 
 
@@ -101,10 +101,10 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n\n⚠️  Demo interrupted by user")
+        print("\n\n Demo interrupted by user")
         sys.exit(0)
     except Exception as e:
-        print(f"\n\n❌ Fatal error: {e}")
+        print(f"\n\n Fatal error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

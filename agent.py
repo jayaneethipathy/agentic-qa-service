@@ -175,7 +175,7 @@ Always cite your sources and explain your reasoning."""
         
         for result in tool_results:
             if result.error:
-                context_parts.append(f"⚠️ {result.tool_name} failed: {result.error}")
+                context_parts.append(f"{result.tool_name} failed: {result.error}")
                 continue
             
             if not result.result:
@@ -208,7 +208,7 @@ Always cite your sources and explain your reasoning."""
                         f"\n🔢 Calculation: {r['expression']} = {r['result']}"
                     )
                 else:
-                    context_parts.append(f"\n⚠️ Calculation failed: {r.get('error', 'Unknown error')}")
+                    context_parts.append(f"\nCalculation failed: {r.get('error', 'Unknown error')}")
         
         # Build final answer
         context = "\n".join(context_parts)
@@ -246,7 +246,7 @@ Always cite your sources and explain your reasoning."""
         final_answer = await self._synthesize_answer(question, results)
         step_times["synthesis"] = int((time.time() - synth_start) * 1000)
         
-        step_times["total"] = int((time.time() - start_time) * 1000)
+        step_times["total"] = max(1, int((time.time() - start_time) * 1000))
         
         # Calculate cost
         cost = CostBreakdown(
@@ -328,7 +328,7 @@ Always cite your sources and explain your reasoning."""
             final_answer = await self._synthesize_answer(question, results)
             step_times["synthesis"] = int((time.time() - synth_start) * 1000)
             
-            step_times["total"] = int((time.time() - start_time) * 1000)
+            step_times["total"] = max(1, int((time.time() - start_time) * 1000))
             
             # Calculate cost
             cost = {
