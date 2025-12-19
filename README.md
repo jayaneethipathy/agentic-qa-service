@@ -96,12 +96,10 @@ docker-compose up
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete architecture documentation (Section A).
 
-**Key Design Decisions:**
-- **Microservices pattern** for scalability
-- **Three-layer caching** (Prompt + Vector + HTTP) - 60% cost reduction
-- **ReAct agent pattern** for transparency
-- **Async-first** for performance
-- **Policy enforcement** for security
+**System Design Highlights:**
+- **Registry Pattern** Decouples the agent from specific tool implementations.
+- **Middleware Logic** The PolicyEnforcer and Tracer act as middleware between the user and the toolset.
+- **Caching Layer** TTL-based InMemoryCache reduces latency for frequent queries (e.g., weather).
 
 ## 🧪 Testing
 ```bash
