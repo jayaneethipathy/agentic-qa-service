@@ -4,7 +4,9 @@ from src.cache import InMemoryCache
 from src.tool_registry import ToolRegistry
 from src.tools.web_search import WebSearchTool
 from src.tools.weather import WeatherTool
+from src.tools.calculator import CalculatorTool
 from src.agent import AgenticQA
+from src.policy import PolicyEnforcer
 
 
 @pytest.mark.asyncio
@@ -14,8 +16,10 @@ async def test_agent_query():
     registry = ToolRegistry()
     registry.register(WebSearchTool(cache=cache))
     registry.register(WeatherTool(cache=cache))
+    registry.register(CalculatorTool(cache=cache))
     
-    agent = AgenticQA(tool_registry=registry,llm_client=None)
+    # FIXED: removed llm_client, added policy
+    agent = AgenticQA(tool_registry=registry, policy=PolicyEnforcer())
     
     response = await agent.query("What's the weather in Tokyo?")
     
@@ -34,15 +38,35 @@ async def test_agent_multi_tool():
     registry = ToolRegistry()
     registry.register(WebSearchTool(cache=cache))
     registry.register(WeatherTool(cache=cache))
+    registry.register(CalculatorTool(cache=cache))
     
-    agent = AgenticQA(tool_registry=registry,llm_client=None)
+    # FIXED: removed llm_client, added policy
+    agent = AgenticQA(tool_registry=registry, policy=PolicyEnforcer())
     
     response = await agent.query("Weather in Paris and search for French news")
     
-    # assert "weather" in response.reasoning_steps[0].lower() or "web_search" in response.reasoning_steps[0].lower()
+    # Check reasoning steps contain both tools
     steps_joined = "".join(response.reasoning_steps).lower()
     assert "weather" in steps_joined
     assert "web_search" in steps_joined
+    assert response.latency_ms.total > 0
+    
+    await registry.close_all()
+
+
+@pytest.mark.asyncio
+async def test_agent_calculator():
+    """Test agent with calculator tool"""
+    cache = InMemoryCache()
+    registry = ToolRegistry()
+    registry.register(CalculatorTool(cache=cache))
+    
+    agent = AgenticQA(tool_registry=registry)
+    
+    response = await agent.query("Calculate 15 * 234 + 567")
+    
+    assert response.answer is not None
+    assert "calculator" in "".join(response.reasoning_steps).lower()
     assert response.latency_ms.total > 0
     
     await registry.close_all()

@@ -1,16 +1,19 @@
 # ============================================================================
 # FILE: src/tools/calculator.py
 # ============================================================================
+# ============================================================================
+# FILE: src/tools/calculator.py
+# ============================================================================
 """Calculator tool for mathematical operations"""
 from typing import Dict, Any
-from src.tools.base import BaseTool
-from src.models import ToolSchema
 import ast
 import operator
+from src.tools.base import BaseTool
+from src.models import ToolSchema
 
 
 class CalculatorTool(BaseTool):
-    """Perform mathematical calculations"""
+    """Perform mathematical calculations safely"""
     
     # Safe operators
     OPERATORS = {
@@ -31,7 +34,7 @@ class CalculatorTool(BaseTool):
                 "properties": {
                     "expression": {
                         "type": "string",
-                        "description": "Mathematical expression to evaluate (e.g., '2 + 2', '10 * 5 + 3')"
+                        "description": "Mathematical expression to evaluate (e.g., '2 + 2', '10 * 5 + 3', '2 ** 8')"
                     }
                 },
                 "required": ["expression"]
@@ -39,13 +42,15 @@ class CalculatorTool(BaseTool):
         )
     
     def _eval_expr(self, node):
-        """Safely evaluate mathematical expression"""
-        if isinstance(node, ast.Num):
+        """Safely evaluate mathematical expression using AST"""
+        if isinstance(node, ast.Num):  # Python 3.7 compatibility
             return node.n
+        elif isinstance(node, ast.Constant):  # Python 3.8+
+            return node.value
         elif isinstance(node, ast.BinOp):
             op_type = type(node.op)
             if op_type not in self.OPERATORS:
-                raise ValueError(f"Unsupported operator: {op_type}")
+                raise ValueError(f"Unsupported operator: {op_type.__name__}")
             return self.OPERATORS[op_type](
                 self._eval_expr(node.left),
                 self._eval_expr(node.right)
@@ -55,12 +60,18 @@ class CalculatorTool(BaseTool):
                 return -self._eval_expr(node.operand)
             elif isinstance(node.op, ast.UAdd):
                 return self._eval_expr(node.operand)
-        raise ValueError(f"Unsupported expression type: {type(node)}")
+            else:
+                raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
+        else:
+            raise ValueError(f"Unsupported expression type: {type(node).__name__}")
     
     async def _execute_impl(self, expression: str) -> Dict[str, Any]:
         """Evaluate mathematical expression safely"""
         try:
-            # Parse and evaluate
+            # Clean the expression
+            expression = expression.strip()
+            
+            # Parse and evaluate using AST (safe - no code execution)
             tree = ast.parse(expression, mode='eval')
             result = self._eval_expr(tree.body)
             
@@ -73,12 +84,34 @@ class CalculatorTool(BaseTool):
                     "url": "internal://calculator"
                 }]
             }
-        except Exception as e:
+        except SyntaxError as e:
+            return {
+                "expression": expression,
+                "result": None,
+                "success": False,
+                "error": f"Syntax error: {str(e)}",
+                "sources": [{
+                    "name": "Calculator",
+                    "url": "internal://calculator"
+                }]
+            }
+        except (ValueError, ZeroDivisionError) as e:
             return {
                 "expression": expression,
                 "result": None,
                 "success": False,
                 "error": str(e),
+                "sources": [{
+                    "name": "Calculator",
+                    "url": "internal://calculator"
+                }]
+            }
+        except Exception as e:
+            return {
+                "expression": expression,
+                "result": None,
+                "success": False,
+                "error": f"Calculation error: {str(e)}",
                 "sources": [{
                     "name": "Calculator",
                     "url": "internal://calculator"

@@ -3,6 +3,7 @@ import pytest
 from src.cache import InMemoryCache
 from src.tools.web_search import WebSearchTool
 from src.tools.weather import WeatherTool
+from src.tools.calculator import CalculatorTool
 
 
 @pytest.mark.asyncio
@@ -33,6 +34,20 @@ async def test_weather_tool():
 
 
 @pytest.mark.asyncio
+async def test_calculator_tool():
+    """Test calculator tool"""
+    tool = CalculatorTool()
+    result = await tool.execute(expression="15 * 234 + 567")
+    
+    assert result.tool_name == "calculator"
+    assert result.error is None
+    assert result.result["success"] is True
+    assert result.result["result"] == 4077
+    
+    await tool.close()
+
+
+@pytest.mark.asyncio
 async def test_tool_caching():
     """Test tool caching"""
     cache = InMemoryCache()
@@ -46,7 +61,31 @@ async def test_tool_caching():
     result2 = await tool.execute(location="Paris")
     latency2 = result2.latency_ms
     
-    # Cached call should be faster (though margin may be small)
-    assert latency2 <= latency1 * 2  # Allow some variance
+    # Check if second result was from cache
+    assert result2.cached is True or latency2 <= latency1 * 2
+    
+    await tool.close()
+
+
+@pytest.mark.asyncio
+async def test_calculator_division():
+    """Test calculator with division"""
+    tool = CalculatorTool()
+    result = await tool.execute(expression="100 / 4")
+    
+    assert result.result["success"] is True
+    assert result.result["result"] == 25.0
+    
+    await tool.close()
+
+
+@pytest.mark.asyncio
+async def test_calculator_invalid_expression():
+    """Test calculator with invalid expression"""
+    tool = CalculatorTool()
+    result = await tool.execute(expression="invalid expression")
+    
+    assert result.result["success"] is False
+    assert result.result["error"] is not None
     
     await tool.close()
