@@ -196,15 +196,11 @@ MIT License - see [LICENSE](./LICENSE) file
 
 **Your Name**
 
-- Email: your.email@example.com
+- Email: jayaneethipathy@gmail.com
 
 ## 🙏 Acknowledgments
 
-- Assessment completed in **3.5 hours**
-- Architecture design: 1 hour
-- Core implementation: 2 hours
-- Bonus features: 30 minutes
-- Testing & documentation: Included throughout
+
 
 ---
 
